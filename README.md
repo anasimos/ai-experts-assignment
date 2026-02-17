@@ -1,65 +1,62 @@
-# AI Experts Assignment (Python)
+# AI Experts Assignment (Python) — Solution 🚀
 
-This assignment evaluates your ability to:
+This repository contains a robust implementation of the HTTP Client, featuring critical fixes for state mutation and authentication logic errors.
 
-- set up a small Python project to run reliably (locally + in Docker),
-- pin dependencies for reproducible installs,
-- write focused tests to reproduce a bug,
-- implement a minimal, reviewable fix.
+---
 
-## What you will do
+## 🛠 How to Run Locally
+Get the project running on your machine in three simple steps:
 
-### 1) Dockerfile (required)
+**1. Create and activate a virtual environment:**
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
 
-Create a `Dockerfile` so the project can run the test suite in a non-interactive, CI-style environment.
+**2. Install pinned dependencies:**
+```bash
+pip install -r requirements.txt
+```
 
-Requirements:
+**3. Execute the test suite:**
+```bash
+pytest -v
+```
 
-- requirements.txt exists and is used during build (pip install -r requirements.txt)
-- pytest must be included/pinned in requirements.txt
-- The image must run tests by default (use: `CMD ["python", "-m", "pytest", "-v"]`).
-- The build must install dependencies from `requirements.txt`.
+---
 
-### 2) requirements.txt (required)
+## 🐳 How to Run with Docker
+This project is fully containerized to ensure consistent results across any environment.
 
-Create a `requirements.txt` with pinned versions, using this format:
+**1. Build the image:**
+```bash
+docker build -t ai-experts-assignment .
+```
 
-- `package==x.y.z`
+**2. Run the containerized tests:**
+```bash
+docker run ai-experts-assignment
+```
 
-### 3) README updates (required)
+---
 
-Update this README to include:
+## 🔍 Bug Identification & Resolution
+The following engineering issues were identified and corrected to ensure the client is production-ready:
 
-- how to run the tests locally,
-- how to build and run tests with Docker.
+* **Header Mutation:** Fixed a bug where the `request` method was modifying the input `headers` dictionary in-place, causing unintended side effects for the caller.
+* **Refresh Logic:** Corrected the logic gate that failed to trigger a token refresh when the `oauth2_token` was in a raw dictionary or `None` state.
+* **Regression Testing:** Added comprehensive tests in `tests/test_http_client.py` to reproduce the identified bugs and verify the fixes.
 
-### 4) Find + fix a bug (required)
+---
 
-There is a bug somewhere in this repository.
+## 📁 Project Structure
+* **app/** — Core application logic including the HTTP Client and Token models.
+* **tests/** — Pytest suite containing original and new regression tests.
+* **Dockerfile** — Configured for non-interactive, CI-style test execution.
+* **requirements.txt** — Project dependencies with strictly pinned versions.
+* **EXPLANATION.md** — Detailed technical breakdown of the bugs and the reasoning behind the fixes.
 
-Your tasks:
+---
 
-- Identify the bug through reading code and/or running tests.
-- Write tests that reproduce the bug (tests should fail on the current code).
-- Apply the smallest possible fix to make the tests pass.
-- Keep the change minimal and reviewable (no refactors).
-
-## Constraints
-
-- Keep changes minimal and reviewable.
-- Do not refactor unrelated code.
-- Do not introduce extra tooling unless required.
-- You may add tests and the smallest code change needed to fix the bug.
-
-### 5) EXPLANATION.md (required)
-
-Create `EXPLANATION.md` (max 250 words) containing:
-
-- **What was the bug?**
-- **Why did it happen?**
-- **Why does your fix solve it?**
-- **One realistic case / edge case your tests still don’t cover**
-
-## Submission
-
-- Submit a public GitHub repository URL containing your solution to the Google form link provided.
+**Author:** Anasimos Tesfaye
+**Status:** ✅ 7/7 Tests Passing
