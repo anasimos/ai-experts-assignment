@@ -43,3 +43,21 @@ def test_api_request_refreshes_when_token_is_dict():
     resp = c.request("GET", "/me", api=True)
 
     assert resp["headers"].get("Authorization") == "Bearer fresh-token"
+
+def test_request_immutability():
+    client = Client()
+    user_headers = {"Custom": "Value"}
+    client.request("GET", "/test", api=True, headers=user_headers)
+    assert "Authorization" not in user_headers, "The input dictionary was mutated!"
+
+def test_request_works_with_none_headers():
+    """
+    Ensure the client handles headers=None gracefully without crashing,
+    even when api=True requires header manipulation.
+    """
+    client = Client()
+    try:
+        resp = client.request("GET", "/test", api=True, headers=None)
+        assert "Authorization" in resp["headers"]
+    except AttributeError:
+        pytest.fail("The request method crashed when headers=None!")
