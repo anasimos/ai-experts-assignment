@@ -23,19 +23,20 @@ class Client:
         api: bool = False,
         headers: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
-        if headers is None:
-            headers = {}
+        # FIX 1: Create a shallow copy to prevent mutating the caller's dictionary
+        request_headers = headers.copy() if headers is not None else {}
 
         if api:
-            if not self.oauth2_token or (
-                isinstance(self.oauth2_token, OAuth2Token) and self.oauth2_token.expired
-            ):
+            # FIX 2: Correct logic to handle 'None', 'dict', or expired 'OAuth2Token'
+            # We refresh if the token is NOT an instance of OAuth2Token OR if it's expired.
+            if not isinstance(self.oauth2_token, OAuth2Token) or self.oauth2_token.expired:
                 self.refresh_oauth2()
 
             if isinstance(self.oauth2_token, OAuth2Token):
-                headers["Authorization"] = self.oauth2_token.as_header()
+                request_headers["Authorization"] = self.oauth2_token.as_header()
 
-        req = requests.Request(method=method, url=f"https://example.com{path}", headers=headers)
+        # Use request_headers throughout the rest of the method
+        req = requests.Request(method=method, url=f"https://example.com{path}", headers=request_headers)
         prepared = self.session.prepare_request(req)
 
         return {
