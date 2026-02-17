@@ -25,3 +25,10 @@ I identified and resolved two primary issues within the `Client.request` impleme
 ### 5. Edge Cases Not Covered
 * **Thread Safety:** The current `Client` uses a shared `requests.Session`. In multi-threaded contexts, simultaneous calls could lead to race conditions during the `refresh_oauth2()` process.
 * **Clock Skew:** The `expired` check is exact. A more robust implementation would include a 30-60 second buffer to account for network latency and unsynced system clocks between the client and the API server.
+### 6. Additional Observations (Code Quality & Efficiency)
+* **URL Construction:** The current implementation uses simple f-string concatenation for URLs. This is prone to errors regarding leading/trailing slashes. A more robust approach would utilize `urllib.parse.urljoin`.
+* **Resource Hanging:** The client currently lacks a `timeout` parameter. In a production setting, a "zombie" server could cause the application to hang indefinitely. I would recommend implementing a default timeout (e.g., 30 seconds) for all network I/O.
+* **Hardcoded Base URL:** The API host is hardcoded as `https://example.com`. To support 12-factor app principles, this should be injected via environment variables or a configuration class to allow for environment-specific endpoints.
+
+### 7. Token Logic Observations (`app/tokens.py`)
+* **Timezone Awareness:** I validated that the `expired` property correctly uses `timezone.utc`. This prevents "Local Time Drift" bugs where a server in a different timezone would prematurely expire tokens.
